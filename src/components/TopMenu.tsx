@@ -31,11 +31,11 @@ export default async function TopMenu() {
                 Sign-In
               </Link>
             )}
+            <TopMenuItem title="My Booking" pageRef="/mybooking" />
           </div>
           
           <div className="flex items-center gap-3">
             <TopMenuItem title="Booking" pageRef="/booking" />
-            <TopMenuItem title="Venue" pageRef="/venue" />
             <div className="flex items-center rounded-md bg-amber-50/80 dark:bg-white/5 px-3 py-1.5">
               <Image
                 src="/img/logo.png"

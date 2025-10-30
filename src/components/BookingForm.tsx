@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/redux/store';
+import { addBooking } from '@/redux/features/bookSlice';
 import {
   TextField,
   Select,
@@ -11,16 +14,33 @@ import {
   Box,
   Paper,
 } from '@mui/material';
-import DateReserve from '@/components/DateReserve';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 export default function BookingForm() {
+  const dispatch = useDispatch<AppDispatch>();
   const [venue, setVenue] = useState('');
   const [name, setName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', { name, contactNumber, venue });
+    
+    if (name && contactNumber && venue && selectedDate) {
+      const bookingItem = {
+        nameLastname: name,
+        tel: contactNumber,
+        venue: venue,
+        bookDate: dayjs(selectedDate).format('YYYY/MM/DD')
+      };
+      
+      dispatch(addBooking(bookingItem));
+      console.log('Booking added:', bookingItem);
+    }
   };
 
   return (
@@ -38,7 +58,6 @@ export default function BookingForm() {
               required
             />
 
-            {/* Contact-Number TextField */}
             <TextField
               name="Contact-Number"
               label="Contact-Number"
@@ -49,7 +68,6 @@ export default function BookingForm() {
               required
             />
 
-            {/* Venue Select */}
             <FormControl variant="standard" fullWidth>
               <InputLabel id="venue-label">Venue</InputLabel>
               <Select
@@ -66,10 +84,17 @@ export default function BookingForm() {
               </Select>
             </FormControl>
 
-            {/* Date Picker */}
-            <DateReserve />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Event Date"
+                value={selectedDate}
+                onChange={(newValue) => {
+                  setSelectedDate(newValue);
+                }}
+                sx={{ width: '100%' }}
+              />
+            </LocalizationProvider>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               variant="contained"
